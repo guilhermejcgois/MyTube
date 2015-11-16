@@ -21,20 +21,12 @@ public class S3Utilities extends AmazonService {
 	private final AmazonS3 s3Client;
 	private AmazonWebServiceRequest s3Request;
 	
-	private String bucketName;
+	private final String bucketName;
 
-	public S3Utilities(AWSCredentials credentials) {
-		super(credentials);
-
+	public S3Utilities(String project) {
 		s3Client = new AmazonS3Client(getCredentials());
-	}
-
-	public String getBucketName() {
-		return bucketName;
-	}
-
-	public void setBucketName(String bucketName) {
-		this.bucketName = bucketName;
+		
+		bucketName = project + "-bucket";
 	}
 	
 	public S3ObjectInputStream download(String keyName) {

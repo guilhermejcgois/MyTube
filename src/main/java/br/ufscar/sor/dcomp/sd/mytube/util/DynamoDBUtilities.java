@@ -29,18 +29,16 @@ public class DynamoDBUtilities extends AmazonService {
 	private final DynamoDB dynamoDB;
 	private final Table table;
 
-	public DynamoDBUtilities(AWSCredentials credentials, String tableName) {
-		super(credentials);
-
+	public DynamoDBUtilities(String project) {
 		dynamoClient = new AmazonDynamoDBClient(getCredentials());
 		dynamoClient.setEndpoint("dynamodb.sa-east-1.amazonaws.com/");
 
 		dynamoDB = new DynamoDB(dynamoClient);
 
-		table = dynamoDB.getTable(tableName);
+		table = dynamoDB.getTable(project + "-table");
 	}
 
-	public void save(PrimaryKey pk, Map<String, Object> infoMap) {
+	public String save(PrimaryKey pk, Map<String, Object> infoMap) throws ClassCastException {
 		Item item = new Item()
 				.withPrimaryKey(pk)
 				.withMap("info", infoMap);
@@ -54,30 +52,40 @@ public class DynamoDBUtilities extends AmazonService {
 		 .with("#yr", "year"));
 		 */
 		table.putItem(item);
+
+		try {
+			return getKeyVideo((String) pk.getComponents().toArray()[0]);
+		} catch (ClassCastException exception) {
+			Exception e
+					= new Exception("The first (and unique) element of pk must "
+							+ "be a String.", exception);
+
+			throw (ClassCastException) e;
+		}
 	}
-	
+
 	public ItemCollection<ScanOutcome> list() {
 		ScanSpec scanSpec = new ScanSpec()
 				.withProjectionExpression("hashVideo, description");
-		
+
 		return table.scan(scanSpec);
 	}
-	
+
 	public String getKeyVideo(String hashVideo) {
 		HashMap<String, String> nameMap = new NameMap()
 				.with("#hv", "hashVideo");
 		HashMap<String, Object> valueMap = new ValueMap()
 				.with("hashVideo", hashVideo);
-		
+
 		QuerySpec querySpec = new QuerySpec()
 				.withFilterExpression("#hv = :hashVideo")
 				.withNameMap(nameMap)
 				.withValueMap(valueMap);
-		
+
 		ItemCollection<QueryOutcome> items = table.query(querySpec);
-		
+
 		Iterator<Item> iterator = items.iterator();
-		
+
 		return iterator.next().getString("bucketKey");
 	}
 

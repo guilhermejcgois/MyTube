@@ -8,14 +8,14 @@ import com.amazonaws.auth.AWSCredentials;
  */
 public abstract class AmazonService {
 	
-	private final AWSCredentials credentials;
-
-	public AmazonService(AWSCredentials credentials) {
-		this.credentials = credentials;
-	}
+	private AWSCredentials credentials;
 
 	public AWSCredentials getCredentials() {
 		return credentials;
+	}
+	
+	protected void setCredentials(AWSCredentials credentials) {
+		this.credentials = credentials;
 	}
 	
 	public abstract String getName();
