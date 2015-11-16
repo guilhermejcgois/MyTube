@@ -9,11 +9,11 @@
     </head>
     <body>
         <form method="post" action="upload">
-			<p><label for="videoToUpload">Upload:</label><input name="videoToUpload" type="file" /></p>
+			<p><label for="videoToUpload">Upload:</label><input name="video" type="file" /></p>
 			<p><input type="submit" value="Enviar" /></p>
 		</form>
         <form method="post" action="download">
-			<p><label for="videoToDownload">Download:</label><input name="videoToDownload" type="file" /></p>
+			<p><label for="videoToDownload">Download:</label><input name="video" type="file" /></p>
 			<p><input type="submit" value="Enviar" /></p>
 		</form>
     </body>
